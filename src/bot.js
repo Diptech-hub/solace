@@ -1,23 +1,25 @@
+import { config } from 'dotenv';
+config({ path: '.env' });
+
+import mongoose from 'mongoose';
 import { Client, Intents } from 'discord.js';
+import { EventHandler } from './handlers/event-handler.js';
+import Deps from './utils/deps.js';
 
-export const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
- 
-bot.on('messageCreate', (message) => {console.log('${bot.user.username} is online')});
-bot.on('message', async (msg) => {
-    if(msg.author.bot) return;
+export const bot = Deps.add(Client, new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] }));
 
-    await msg.reply('Hi');
-});
+mongoose.connect(process.env.MONGO_URI, {
+    useUnifiedRopology: true,
+    useFindAndModify: true,
+    useCreateIndex: true,
+    useNewUrlParser: true,
+}, (error) => (error)
+    ? console.log('failed to connect to database')
+    : console.log('connected to database'));
 
-bot.login('OTA5NDM5OTQwMDk2NTg5ODQ0.YZET8g.XEGgX6NZXTO2GUf-gggTlGffims');
+Deps.get(EventHandler).init();
 
-
-
-
-
-
-
-
+bot.login(process.env.BOT_TOKEN);
 
 
 
@@ -33,23 +35,3 @@ bot.login('OTA5NDM5OTQwMDk2NTg5ODQ0.YZET8g.XEGgX6NZXTO2GUf-gggTlGffims');
 
 
 
-// import { Client, Intents } from 'discord.js';
-
-// export const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
- 
-// bot.on('messageCreate', () => {console.log('${bot.user.username} is online')});
-// bot.on('message', async (msg) => {
-//     if(msg.author.bot) return;
-
-//     await msg.reply('Hi');
-// });
-
-// Client.login( 'OTA5NDM5OTQwMDk2NTg5ODQ0.YZET8g.XEGgX6NZXTO2GUf-gggTlGffims' );
-
-
-
-// const bot = new Client();
-
-// bot.on('ready', () => console.log('ready'));
-
-// bot.login('OTA5NDM5OTQwMDk2NTg5ODQ0.YZET8g.Ysq2AMnH3kOQBQKOMmzrIwNOvwk');
